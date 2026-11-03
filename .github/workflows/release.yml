@@ -1,0 +1,72 @@
+name: Build and release
+
+# Every code change on main builds a new version and publishes it as the latest release.
+# Docs-only changes (README, screenshots, license) don't create a release.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "LICENSE"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # Major.minor come from <Version> in DiskCleaner.csproj; the patch number is the workflow run number.
+      - name: Compute version
+        id: version
+        shell: pwsh
+        run: |
+          $xml = [xml](Get-Content DiskCleaner.csproj)
+          $base = ($xml.Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1)
+          $parts = $base.Split('.')
+          $version = "$($parts[0]).$($parts[1]).$env:GITHUB_RUN_NUMBER"
+          "version=$version" >> $env:GITHUB_OUTPUT
+          Write-Host "Version $version"
+
+      - name: Publish (needs .NET 10 Desktop Runtime)
+        run: dotnet publish DiskCleaner.csproj -c Release -o out/fd -p:Version=${{ steps.version.outputs.version }}
+
+      - name: Publish (standalone, no .NET needed)
+        run: dotnet publish DiskCleaner.csproj -c Release -o out/sc --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:Version=${{ steps.version.outputs.version }}
+
+      - name: Collect assets
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item out/fd/DiskCleaner.exe dist/DiskCleaner.exe
+          Copy-Item out/sc/DiskCleaner.exe dist/DiskCleaner-standalone.exe
+          Get-FileHash dist/*.exe -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" } | Set-Content dist/SHA256SUMS.txt
+          Get-ChildItem dist | Format-Table Name, Length
+
+      - name: Create release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          $notes = @"
+          **Download**
+          - ``DiskCleaner.exe`` - small, needs the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
+          - ``DiskCleaner-standalone.exe`` - larger, runs without .NET installed
+
+          Built from $env:GITHUB_SHA.
+          "@
+          gh release create "v$env:VERSION" dist/DiskCleaner.exe dist/DiskCleaner-standalone.exe dist/SHA256SUMS.txt `
+            --title "Disk Cleaner $env:VERSION" --notes "$notes" --target $env:GITHUB_SHA --latest
