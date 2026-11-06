@@ -16,6 +16,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- Fluent ThemeMode is marked experimental in WPF. -->
     <NoWarn>$(NoWarn);WPF0001</NoWarn>
+    <!-- Fail the restore on known-vulnerable packages, including transitive ones. -->
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+    <WarningsAsErrors>$(WarningsAsErrors);NU1900;NU1901;NU1902;NU1903;NU1904</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

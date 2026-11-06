@@ -10,9 +10,9 @@
 [![Latest release](https://img.shields.io/github/v/release/syedamerzaidi/disk-cleaner?label=latest)](https://github.com/syedamerzaidi/disk-cleaner/releases/latest)
 [![Build and release](https://github.com/syedamerzaidi/disk-cleaner/actions/workflows/release.yml/badge.svg)](https://github.com/syedamerzaidi/disk-cleaner/actions/workflows/release.yml)
 
-### [⬇ Download DiskCleaner.exe](https://github.com/syedamerzaidi/disk-cleaner/releases/latest/download/DiskCleaner.exe)
+### [⬇ Download DiskCleaner.exe](https://github.com/syedamerzaidi/disk-cleaner/releases/latest/download/DiskCleaner-standalone.exe)
 
-<sub>~330 KB · needs the <a href="https://dotnet.microsoft.com/download/dotnet/10.0">.NET 10 Desktop Runtime</a> · or get the <a href="https://github.com/syedamerzaidi/disk-cleaner/releases/latest/download/DiskCleaner-standalone.exe">standalone exe</a> that runs without .NET</sub>
+<sub>~70 MB · nothing else to install</sub>
 
 <img src="docs/overview.png" alt="Overview page: free space per drive and reclaimable space by category" width="860">
 
@@ -85,12 +85,9 @@ Windows' own tools spread this across Disk Cleanup, Storage Sense, Task Manager,
 
 No installer: download one file and run it.
 
-| Download | Size | Needs |
-| --- | --- | --- |
-| [**DiskCleaner.exe**](https://github.com/syedamerzaidi/disk-cleaner/releases/latest/download/DiskCleaner.exe) | ~330 KB | [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (Windows offers to install it on first launch if missing) |
-| [**DiskCleaner-standalone.exe**](https://github.com/syedamerzaidi/disk-cleaner/releases/latest/download/DiskCleaner-standalone.exe) | ~70 MB | Nothing |
+[**Download DiskCleaner.exe**](https://github.com/syedamerzaidi/disk-cleaner/releases/latest/download/DiskCleaner-standalone.exe) (~70 MB). Nothing else to install, .NET is built in.
 
-Both links always point to the newest version. Older versions and SHA-256 checksums are on the [Releases](https://github.com/syedamerzaidi/disk-cleaner/releases) page.
+The link always points to the newest version. Older versions and SHA-256 checksums are on the [Releases](https://github.com/syedamerzaidi/disk-cleaner/releases) page.
 
 Windows SmartScreen may warn because the exe is not code-signed: choose **More info › Run anyway**, or build it yourself.
 
